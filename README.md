@@ -16,6 +16,7 @@
   <a href="https://www.npmjs.com/package/react-native-gifted-chat">
   <img alt="npm downloads" src="https://img.shields.io/npm/dm/react-native-gifted-chat.svg"/></a>
   <a href="https://www.npmjs.com/package/react-native-gifted-chat"><img alt="npm version" src="https://badge.fury.io/js/react-native-gifted-chat.svg"/></a>
+  <a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/FaridSafi/react-native-gifted-chat.svg" alt="build"></a>
    <a href="https://reactnative.gallery/FaridSafi/gifted-chat"><img src="https://img.shields.io/badge/reactnative.gallery-%F0%9F%8E%AC-green.svg"/></a>
 
 </p>
@@ -31,17 +32,13 @@
 <p align="center">
   <a href="https://reverent-bardeen-47c862.netlify.com/" target="_blank">Demo Web 🖥</a>
 </p>
-<p align="center">
-  <a href="https://snack.expo.io/@xcarpentier/giftedchat-playground" target="_blank">Snack GiftedChat playground</a>
-  <img height="18" src="https://snack.expo.io/favicon.ico" />
-</p>
 
 ## Sponsor
 
 <p align="center">
   <br/>
   <a href="https://www.lereacteur.io" target="_blank">
-    <img src="https://raw.githubusercontent.com/FaridSafi/react-native-gifted-chat/master/media/logo_sponsor.png">
+    <img src="https://raw.githubusercontent.com/FaridSafi/react-native-gifted-chat/sponsor-lereacteur/media/logo_sponsor.png">
   </a>
   <br>
   <p align="center">
@@ -68,26 +65,6 @@
   </p>
 </p>
 
-<p align="center">
-  <br/>
-  <a href="https://www.docdok.health/?utm_source=github&utm_medium=react-native-gifted-chat&utm_campaign=sponsorship" target="_blank">
-    <img src="https://www.dropbox.com/s/g4dcq267aqbykpz/logo.png?dl=0&raw=1">
-  </a>
-  <br>
-  <p align="center">Delivering Personalized Healthcare</p>
-  <p align="center">
-    <a href="https://www.docdok.health/?utm_source=github&utm_medium=react-native-gifted-chat&utm_campaign=sponsorship" target="_blank">      Find out more</a>
-  </p>
-</p>
-
-## The future of GiftedChat 🎉 
-Please give us your advice: [Related PR](https://github.com/FaridSafi/react-native-gifted-chat/pull/1775)
-
-## Please vote
-
-**GiftedChat** depends on other packages and some needs a boost, please vote for PRs will improve it, thanks:
-- https://github.com/watadarkstar/react-native-typing-animation/issues/18
-
 ## Features
 
 - 🎉 **_`react-native-web`able_ (since 0.10.0)** [web configuration](#react-native-web)
@@ -104,7 +81,6 @@ Please give us your advice: [Related PR](https://github.com/FaridSafi/react-nati
 - Redux support
 - System message
 - Quick Reply messages (bot)
-- Typying indicatior [react-native-typing-animation](https://github.com/watadarkstar/react-native-typing-animation)
 
 ## Dependency
 
@@ -132,46 +108,54 @@ Please give us your advice: [Related PR](https://github.com/FaridSafi/react-nati
 ## Example
 
 ```jsx
-import React, { useState, useCallback, useEffect } from 'react'
+import React from 'react'
 import { GiftedChat } from 'react-native-gifted-chat'
 
-export function Example() {
-  const [messages, setMessages] = useState([]);
+class Example extends React. Component {
+  state = {
+    messages: [],
+  }
 
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
+  componentWillMount() {
+    this.setState({
+      messages: [
+        {
+          _id: 1,
+          text: 'Hello developer',
+          createdAt: new Date(),
+          user: {
+            _id: 2,
+            name: 'React Native',
+            avatar: 'https://placeimg.com/140/140/any',
+          },
         },
-      },
-    ])
-  }, [])
+      ],
+    })
+  }
 
-  const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
-  }, [])
+  onSend(messages = []) {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }))
+  }
 
-  return (
-    <GiftedChat
-      messages={messages}
-      onSend={messages => onSend(messages)}
-      user={{
-        _id: 1,
-      }}
-    />
-  )
+  render() {
+    return (
+      <GiftedChat
+        messages={this.state.messages}
+        onSend={messages => this.onSend(messages)}
+        user={{
+          _id: 1,
+        }}
+      />
+    )
+  }
 }
 ```
 
 ## Advanced example
 
-See [`App.tsx`](https://github.com/FaridSafi/react-native-gifted-chat/blob/master/App.tsx) for a working demo!
+See [`App.js`](App.js) for a working demo!
 
 ## "Slack" example
 
@@ -180,23 +164,6 @@ See the files in [`example-slack-message`](example-slack-message) for an example
 ## Message object
 
 > e.g. Chat Message
-
-```ts
-export interface IMessage {
-  _id: string | number
-  text: string
-  createdAt: Date | number
-  user: User
-  image?: string
-  video?: string
-  audio?: string
-  system?: boolean
-  sent?: boolean
-  received?: boolean
-  pending?: boolean
-  quickReplies?: QuickReplies
-}
-```
 
 ```js
 {
@@ -211,12 +178,6 @@ export interface IMessage {
   image: 'https://facebook.github.io/react/img/logo_og.png',
   // You can also add a video prop:
   video: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
-  // Mark the message as sent, using one tick
-  sent: true,
-  // Mark the message as received, using two tick
-  received: true,
-  // Mark the message as pending with a clock loader
-  pending: true,
   // Any additional custom parameters are passed through
 }
 ```
@@ -310,18 +271,17 @@ interface QuickReplies {
 ## Props
 
 - **`messages`** _(Array)_ - Messages to display
-- **`isTyping`** _(Bool)_ - Typing Indicator state; default `false`. If you use`renderFooter` it will override this.
 - **`text`** _(String)_ - Input text; default is `undefined`, but if specified, it will override GiftedChat's internal state (e.g. for redux; [see notes below](#notes-for-redux))
 - **`placeholder`** _(String)_ - Placeholder when `text` is empty; default is `'Type a message...'`
 - **`messageIdGenerator`** _(Function)_ - Generate an id for new messages. Defaults to UUID v4, generated by [uuid](https://github.com/kelektiv/node-uuid)
 - **`user`** _(Object)_ - User sending the messages: `{ _id, name, avatar }`
 - **`onSend`** _(Function)_ - Callback when sending a message
 - **`alwaysShowSend`** _(Bool)_ - Always show send button in input text composer; default `false`, show only when text input is not empty
-- **`locale`** _(String)_ - Locale to localize the dates. You need first to import the locale you need (ie. `require('dayjs/locale/de')` or `import 'dayjs/locale/fr'`)
+- **`locale`** _(String)_ - Locale to localize the dates
 - **`timeFormat`** _(String)_ - Format to use for rendering times; default is `'LT'`
 - **`dateFormat`** _(String)_ - Format to use for rendering dates; default is `'ll'`
-- **`loadEarlier`** _(Bool)_ - Enables the "load earlier messages" button, required for `infiniteScroll`
-- **`isKeyboardInternallyHandled`** _(Bool)_ - Determine whether to handle keyboard awareness inside the plugin. If you have your own keyboard handling outside the plugin set this to false; default is `true`
+- **`isAnimated`** _(Bool)_ - Animates the view when the keyboard appears
+- **`loadEarlier`** _(Bool)_ - Enables the "load earlier messages" button
 - **`onLoadEarlier`** _(Function)_ - Callback when loading earlier messages
 - **`isLoadingEarlier`** _(Bool)_ - Display an `ActivityIndicator` when loading earlier messages
 - **`renderLoading`** _(Function)_ - Render a loading view when initializing
@@ -333,7 +293,6 @@ interface QuickReplies {
 - **`onLongPressAvatar`** _(Function(`user`))_ - Callback when a message avatar is long-pressed
 - **`renderAvatarOnTop`** _(Bool)_ - Render the message avatar at the top of consecutive messages, rather than the bottom; default is `false`
 - **`renderBubble`** _(Function)_ - Custom message bubble
-- **`renderTicks`** _(Function(`message`))_ - Custom ticks indicator to display message status
 - **`renderSystemMessage`** _(Function)_ - Custom system message
 - **`onLongPress`** _(Function(`context`, `message`))_ - Callback when a message bubble is long-pressed; default is to show an ActionSheet with "Copy Text" (see [example using `showActionSheetWithOptions()`](https://github.com/FaridSafi/react-native-gifted-chat/blob/master@%7B2017-09-25%7D/src/Bubble.js#L96-L119))
 - **`inverted`** _(Bool)_ - Reverses display order of `messages`; default is `true`
@@ -342,15 +301,14 @@ interface QuickReplies {
 - **`renderMessageText`** _(Function)_ - Custom message text
 - **`renderMessageImage`** _(Function)_ - Custom message image
 - **`renderMessageVideo`** _(Function)_ - Custom message video
-- **`imageProps`** _(Object)_ - Extra props to be passed to the [`<Image>`](https://facebook.github.io/react-native/docs/image.html) component created by the default `renderMessageImage`
+- **image props`** _(Object)_ - Extra props to be passed to the [`<Image>`](https://facebook.github.io/react-native/docs/image.html) component created by the default `renderMessageImage`
 - **`videoProps`** _(Object)_ - Extra props to be passed to the video component created by the required `renderMessageVideo`
 - **`lightboxProps`** _(Object)_ - Extra props to be passed to the `MessageImage`'s [Lightbox](https://github.com/oblador/react-native-lightbox)
 - **`isCustomViewBottom`** _(Bool)_ - Determine whether renderCustomView is displayed before or after the text, image and video views; default is `false`
 - **`renderCustomView`** _(Function)_ - Custom view inside the bubble
 - **`renderDay`** _(Function)_ - Custom day above a message
 - **`renderTime`** _(Function)_ - Custom time inside a message
-- **`renderFooter`** _(Function)_ - Custom footer component on the ListView, e.g. `'User is typing...'`; see [example/App.js](example/App.js) for an example. Overrides default typing indicator that triggers when `isTyping` is true.
-- **`renderChatEmpty`** _(Function)_ - Custom component to render in the ListView when messages are empty
+- **`renderFooter`** _(Function)_ - Custom footer component on the ListView, e.g. `'User is typing...'`; see [example/App.js](example/App.js) for an example
 - **`renderChatFooter`** _(Function)_ - Custom component to render below the MessageContainer (separate from the ListView)
 - **`renderInputToolbar`** _(Function)_ - Custom message composer container
 - **`renderComposer`** _(Function)_ - Custom text input message composer
@@ -362,8 +320,6 @@ interface QuickReplies {
 - **`minInputToolbarHeight`** _(Integer)_ - Minimum height of the input toolbar; default is `44`
 - **`listViewProps`** _(Object)_ - Extra props to be passed to the messages [`<ListView>`](https://facebook.github.io/react-native/docs/listview.html); some props can't be overridden, see the code in `MessageContainer.render()` for details
 - **`textInputProps`** _(Object)_ - Extra props to be passed to the [`<TextInput>`](https://facebook.github.io/react-native/docs/textinput.html)
-- **`textInputStyle`** _(Object)_ - Custom style to be passed to the [`<TextInput>`](https://facebook.github.io/react-native/docs/textinput.html)
-- **`multiline`** _(Bool)_ - Indicates whether to allow the [`<TextInput>`](https://facebook.github.io/react-native/docs/textinput.html) to be multiple lines or not; default `true`.
 - **`keyboardShouldPersistTaps`** _(Enum)_ - Determines whether the keyboard should stay visible after a tap; see [`<ScrollView>`](https://facebook.github.io/react-native/docs/scrollview.html) docs
 - **`onInputTextChanged`** _(Function)_ - Callback when the input text changes
 - **`maxInputLength`** _(Integer)_ - Max message composer TextInput length
@@ -392,7 +348,6 @@ interface QuickReplies {
 * **`quickReplyStyle`** _(StyleProp<ViewStyle>)_ - Custom quick reply view style
 * **`renderQuickReplySend`** _(Function)_ - Custom quick reply **send** view
 * **`shouldUpdateMessage`** _(Function)_ - Lets the message component know when to update outside of normal cases.
-* **`infiniteScroll`** _(Bool)_ - infinite scroll up when reach the top of messages container, automatically call onLoadEarlier function if exist (not yet supported for the web). You need to add `loadEarlier` prop too.
 
 ## Imperative methods
 
@@ -451,19 +406,15 @@ If you use React Navigation, additional handling may be required to account for 
 
 ### Native
 
-1. Install `yarn global add expo-cli`
-2. Install dependencies`yarn install`
-3. `expo start`
+1. Install `yarn add -g expo-cli`
+2. `expo start`
 
 ### react-native-web
 
 #### With expo
 
-1. Install `yarn global add expo-cli`
-2. Install dependencies`yarn install`
-3. `expo start -w`
-
-[Upgrade snack version](https://snackager.expo.io/bundle/react-native-gifted-chat@0.15.0?bypassCache=true)
+1. Install `yarn add -g expo-cli`
+2. `expo start -w`
 
 #### With create-react-app
 
@@ -515,7 +466,7 @@ module.exports = function override(config, env) {
 
 ## Author
 
-Feel free to ask me questions on Twitter [@FaridSafi](https://www.twitter.com/FaridSafi)! or [@xcapetir](https://www.twitter.com/xcapetir)!
+Feel free to ask me questions on Twitter [@FaridSafi](https://www.twitter.com/FaridSafi)!
 
 ## Contributors
 
@@ -527,4 +478,6 @@ Feel free to ask me questions on Twitter [@FaridSafi](https://www.twitter.com/Fa
 
 ## Hire an expert!
 
-Looking for a ReactNative freelance expert with more than 14 years of experience? Contact Xavier from his [website](https://xaviercarpentier.com)!
+Looking for a ReactNative freelance expert with more than 12 years of experience? Contact Xavier from his [website](https://xaviercarpentier.com)!
+
+<img src="https://api.keen.io/3.0/projects/5ae31b61c9e77c0001cc2093/events/pageviews?api_key=55301C3E5BAB217E90A5867113C02506CE20385CD6F4C9C1CCDD4671B1A9DE374C3DF9DEF70C0BB3F5A9C5CA4CB1CCCFAF25FC3ED9CF63FB83102456A6881EFBAECD1C7D9718EE5402752DD8F6FA2DEC4D844BCB17FE6262570DB447D9A8CED2&data=eyJ0aXRsZSI6ICJnYyJ9" />
